@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Email Form System</title>
+  
+  <!-- CSS -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  
+  <!-- Templates -->
+  <script type="text/html" id="base-template">
+    <div class="app-container">
+      <header class="app-header">
+        <div class="header-left">
+          <button id="sidebar-toggle" class="sidebar-toggle">
+            <i class="material-icons">menu</i>
+          </button>
+          <h1 class="app-title">Email Form System</h1>
+        </div>
+        <div class="header-right">
+          <div class="user-menu">
+            <button id="user-menu-button" class="user-menu-button">
+              <span class="user-name">${userName}</span>
+              <i class="material-icons">arrow_drop_down</i>
+            </button>
+            <div id="user-dropdown" class="user-dropdown">
+              <div class="user-dropdown-header">
+                <i class="material-icons">account_circle</i>
+                <div>
+                  <div class="user-name">${userName}</div>
+                  <div class="user-email">${userEmail}</div>
+                </div>
+              </div>
+              <div class="user-dropdown-items">
+                <a href="/settings" class="user-dropdown-item">
+                  <i class="material-icons">settings</i>
+                  Settings
+                </a>
+                <a href="#" id="logout-button" class="user-dropdown-item">
+                  <i class="material-icons">exit_to_app</i>
+                  Logout
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+      <div class="main-content">
+        <aside id="sidebar" class="sidebar">
+          <nav class="sidebar-nav">
+            <ul class="nav-list">
+              <li class="nav-item">
+                <a href="/" class="nav-link" data-route="/">
+                  <i class="material-icons">dashboard</i>
+                  Dashboard
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="/forms" class="nav-link" data-route="/forms">
+                  <i class="material-icons">description</i>
+                  Forms
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="/recipients" class="nav-link" data-route="/recipients">
+                  <i class="material-icons">people</i>
+                  Recipients
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="/tracking" class="nav-link" data-route="/tracking">
+                  <i class="material-icons">track_changes</i>
+                  Tracking
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="/extraction" class="nav-link" data-route="/extraction">
+                  <i class="material-icons">data_usage</i>
+                  Data Extraction
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="/settings" class="nav-link" data-route="/settings">
+                  <i class="material-icons">settings</i>
+                  Settings
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </aside>
+        <main id="content" class="content">
+          <!-- Page content will be inserted here -->
+        </main>
+      </div>
+      <footer class="app-footer">
+        <p>&copy; 2025 Email Form System. All rights reserved.</p>
+      </footer>
+    </div>
+  </script>
+  
+  <!-- Login Template -->
+  <script type="text/html" id="login-template">
+    <div class="auth-container">
+      <div class="auth-card">
+        <div class="auth-header">
+          <h1>Welcome Back</h1>
+          <p>Sign in to your account</p>
+        </div>
+        <div class="auth-content">
+          <form id="login-form" class="auth-form">
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input type="email" id="email" class="form-control" placeholder="Enter your email">
+              <div id="email-error" class="error-text"></div>
+            </div>
+            <div class="form-group">
+              <label for="password">Password</label>
+              <input type="password" id="password" class="form-control" placeholder="Enter your password">
+              <div id="password-error" class="error-text"></div>
+            </div>
+            <div id="login-error" class="alert alert-danger" style="display: none;"></div>
+            <div class="form-actions">
+              <div class="form-check">
+                <input type="checkbox" id="remember-me" class="form-check-input">
+                <label for="remember-me" class="form-check-label">Remember me</label>
+              </div>
+              <button type="submit" class="btn btn-primary">Sign In</button>
+            </div>
+          </form>
+          <div class="auth-footer">
+            <p>Don't have an account? <a href="/register">Register</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </script>
+  
+  <!-- Register Template -->
+  <script type="text/html" id="register-template">
+    <div class="auth-container">
+      <div class="auth-card">
+        <div class="auth-header">
+          <h1>Create Account</h1>
+          <p>Sign up for a new account</p>
+        </div>
+        <div class="auth-content">
+          <div class="stepper">
+            <div class="step active" data-step="1">
+              <div class="step-number">1</div>
+              <div class="step-label">Account</div>
+            </div>
+            <div class="step" data-step="2">
+              <div class="step-number">2</div>
+              <div class="step-label">Profile</div>
+            </div>
+            <div class="step" data-step="3">
+              <div class="step-number">3</div>
+              <div class="step-label">Confirm</div>
+            </div>
+          </div>
+          
+          <form id="register-form" class="auth-form">
+            <div class="step-content active" data-step-content="1">
+              <div class="form-group">
+                <label for="reg-email">Email</label>
+                <input type="email" id="reg-email" class="form-control" placeholder="Enter your email">
+                <div id="email-error" class="error-text"></div>
+              </div>
+              <div class="form-group">
+                <label for="reg-password">Password</label>
+                <input type="password" id="reg-password" class="form-control" placeholder="Enter your password">
+                <div id="password-error" class="error-text"></div>
+              </div>
+              <div class="form-group">
+                <label for="reg-confirm-password">Confirm Password</label>
+                <input type="password" id="reg-confirm-password" class="form-control" placeholder="Confirm your password">
+                <div id="confirm-password-error" class="error-text"></div>
+              </div>
+            </div>
+            
+            <div class="step-content" data-step-content="2">
+              <div class="form-group">
+                <label for="firstName">First Name</label>
+                <input type="text" id="firstName" class="form-control" placeholder="Enter your first name">
+                <div id="firstName-error" class="error-text"></div>
+              </div>
+              <div class="form-group">
+                <label for="lastName">Last Name</label>
+                <input type="text" id="lastName" class="form-control" placeholder="Enter your last name">
+                <div id="lastName-error" class="error-text"></div>
+              </div>
+              <div class="form-group">
+                <label for="phone">Phone (optional)</label>
+                <input type="tel" id="phone" class="form-control" placeholder="Enter your phone number">
+              </div>
+              <div class="form-group">
+                <label for="company">Company (optional)</label>
+                <input type="text" id="company" class="form-control" placeholder="Enter your company name">
+              </div>
+            </div>
+            
+            <div class="step-content" data-step-content="3">
+              <h3>Review Your Information</h3>
+              <div class="review-info">
+                <div class="review-row">
+                  <div class="review-label">Email:</div>
+                  <div id="review-email" class="review-value"></div>
+                </div>
+                <div class="review-row">
+                  <div class="review-label">Name:</div>
+                  <div id="review-name" class="review-value"></div>
+                </div>
+                <div class="review-row">
+                  <div class="review-label">Phone:</div>
+                  <div id="review-phone" class="review-value"></div>
+                </div>
+                <div class="review-row">
+                  <div class="review-label">Company:</div>
+                  <div id="review-company" class="review-value"></div>
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <div class="form-check">
+                  <input type="checkbox" id="agreeToTerms" class="form-check-input">
+                  <label for="agreeToTerms" class="form-check-label">I agree to the <a href="#" target="_blank">Terms and Conditions</a></label>
+                  <div id="terms-error" class="error-text"></div>
+                </div>
+              </div>
+              
+              <div id="register-error" class="alert alert-danger" style="display: none;"></div>
+            </div>
+            
+            <div class="form-actions">
+              <button type="button" id="prev-step" class="btn btn-secondary" style="display: none;">Previous</button>
+              <div class="spacer"></div>
+              <button type="button" id="next-step" class="btn btn-primary">Next</button>
+              <button type="submit" id="complete-registration" class="btn btn-success" style="display: none;">Complete Registration</button>
+            </div>
+          </form>
+          
+          <div class="auth-footer">
+            <p>Already have an account? <a href="/login">Sign In</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </script>
+  
+  <!-- Dashboard Template -->
+  <script type="text/html" id="dashboard-template">
+    <div class="dashboard-page">
+      <div class="page-header">
+        <h2>Dashboard</h2>
+        <div class="page-actions">
+          <button class="btn btn-primary">
+            <i class="material-icons">add</i>
+            New Form
+          </button>
+        </div>
+      </div>
+      
+      <div class="dashboard-summary">
+        <div class="summary-card">
+          <div class="summary-icon">
+            <i class="material-icons">description</i>
+          </div>
+          <div class="summary-content">
+            <div id="forms-count" class="summary-value">0</div>
+            <div class="summary-label">Forms</div>
+          </div>
+        </div>
+        
+        <div class="summary-card">
+          <div class="summary-icon">
+            <i class="material-icons">people</i>
+          </div>
+          <div class="summary-content">
+            <div id="recipients-count" class="summary-value">0</div>
+            <div class="summary-label">Recipients</div>
+          </div>
+        </div>
+        
+        <div class="summary-card">
+          <div class="summary-icon">
+            <i class="material-icons">email</i>
+          </div>
+          <div class="summary-content">
+            <div id="emails-sent-count" class="summary-value">0</div>
+            <div class="summary-label">Emails Sent</div>
+          </div>
+        </div>
+        
+        <div class="summary-card">
+          <div class="summary-icon">
+            <i class="material-icons">assignment_turned_in</i>
+          </div>
+          <div class="summary-content">
+            <div id="forms-returned-count" class="summary-value">0</div>
+            <div class="summary-label">Forms Returned</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="dashboard-section">
+        <div class="section-header">
+          <h3>Recent Activity</h3>
+        </div>
+        <div class="section-content">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Activity</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="activity-table-body">
+              <tr class="empty-row">
+                <td colspan="3">No recent activity</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </script>
+  
+  <!-- Forms Template -->
+  <script type="text/html" id="forms-template">
+    <div class="forms-page">
+      <div class="page-header">
+        <h2>Forms</h2>
+        <div class="page-actions">
+          <button id="upload-form-btn" class="btn btn-primary">
+            <i class="material-icons">upload_file</i>
+            Upload Form
+          </button>
+        </div>
+      </div>
+      
+      <div class="form-upload-container" style="display: none;">
+        <h3 class="form-upload-title">Upload PDF Form</h3>
+        <div id="file-upload-area" class="file-upload-area">
+          <div class="file-upload-icon">
+            <i class="material-icons">cloud_upload</i>
+          </div>
+          <div class="file-upload-text">
+            <p>Drag and drop your PDF file here, or click to browse</p>
+            <p class="text-muted">Maximum file size: 10MB</p>
+          </div>
+          <input type="file" id="file-upload-input" class="file-upload-input" accept=".pdf">
+        </div>
+        <div id="upload-progress" class="upload-progress">
+          <div class="progress-bar-container">
+            <div id="progress-bar" class="progress-bar"></div>
+          </div>
+          <div id="progress-text" class="progress-text">0%</div>
+        </div>
+        <div class="form-actions">
+          <button id="cancel-upload-btn" class="btn btn-secondary">Cancel</button>
+          <button id="upload-btn" class="btn btn-primary">Upload</button>
+        </div>
+      </div>
+      
+      <div id="forms-container" class="forms-container">
+        <!-- Forms will be loaded here -->
+      </div>
+    </div>
+  </script>
+  
+  <!-- Form Card Template -->
+  <script type="text/html" id="form-card-template">
+    <div class="form-card">
+      <div class="form-card-header">
+        <h3 class="form-card-title">${name}</h3>
+      </div>
+      <div class="form-card-content">
+        <p class="form-card-description">PDF Form</p>
+        <div class="form-card-info">
+          <span>Size: ${size}</span>
+          <span>Created: ${created}</span>
+        </div>
+      </div>
+      <div class="form-card-actions">
+        <button class="form-card-action view-form" data-id="${id}">
+          <i class="material-icons">visibility</i>
+          View
+        </button>
+        <button class="form-card-action send-form" data-id="${id}">
+          <i class="material-icons">send</i>
+          Send
+        </button>
+        <button class="form-card-action delete-form" data-id="${id}">
+          <i class="material-icons">delete</i>
+          Delete
+        </button>
+      </div>
+    </div>
+  </script>
+  
+  <!-- Recipients Template -->
+  <script type="text/html" id="recipients-template">
+    <div class="recipients-page">
+      <div class="page-header">
+        <h2>Recipients</h2>
+        <div class="page-actions">
+          <button id="add-recipient-btn" class="btn btn-primary">
+            <i class="material-icons">person_add</i>
+            Add Recipient
+          </button>
+          <button id="import-recipients-btn" class="btn btn-secondary">
+            <i class="material-icons">upload_file</i>
+            Import
+          </button>
+        </div>
+      </div>
+      
+      <div class="search-container">
+        <i class="material-icons search-icon">search</i>
+        <input type="text" id="search-recipients" class="form-control search-input" placeholder="Search recipients...">
+      </div>
+      
+      <div class="recipients-table-container">
+        <div class="recipients-table-header">
+          <h3 class="recipients-table-title">All Recipients</h3>
+          <div class="recipients-table-actions">
+            <button id="export-recipients-btn" class="btn btn-sm btn-secondary">
+              <i class="material-icons">download</i>
+              Export
+            </button>
+          </div>
+        </div>
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Forms Sent</th>
+                <th>Forms Returned</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="recipients-table-body">
+              <tr class="empty-row">
+                <td colspan="5">No recipients found</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </script>
+  
+  <!-- Tracking Template -->
+  <script type="text/html" id="tracking-template">
+    <div class="tracking-page">
+      <div class="page-header">
+        <h2>Form Tracking</h2>
+        <div class="page-actions">
+          <button id="check-returns-btn" class="btn btn-primary">
+            <i class="material-icons">refresh</i>
+            Check Returns
+          </button>
+          <button id="export-tracking-btn" class="btn btn-secondary">
+            <i class="material-icons">download</i>
+            Export
+          </button>
+        </div>
+      </div>
+      
+      <div class="tracking-filters">
+        <div class="form-group filter-group">
+          <label for="filter-form">Filter by Form</label>
+          <select id="filter-form" class="form-control">
+            <option value="">All Forms</option>
+          </select>
+        </div>
+        <div class="form-group filter-group">
+          <label for="filter-recipient">Filter by Recipient</label>
+          <select id="filter-recipient" class="form-control">
+            <option value="">All Recipients</option>
+          </select>
+        </div>
+        <div class="form-group filter-group">
+          <label for="filter-status">Filter by Status</label>
+          <select id="filter-status" class="form-control">
+            <option value="">All Status</option>
+            <option value="sent">Sent Only</option>
+            <option value="returned">Returned Only</option>
+            <option value="not-returned">Not Returned</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="tracking-table-container">
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Recipient</th>
+                <th>Form</th>
+                <th>Date Sent</th>
+                <th>Status</th>
+                <th>Date Returned</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="tracking-table-body">
+              <tr class="empty-row">
+                <td colspan="6">No tracking records found</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </script>
+  
+  <!-- Data Extraction Template -->
+  <script type="text/html" id="extraction-template">
+    <div class="extraction-page">
+      <div class="page-header">
+        <h2>Data Extraction</h2>
+        <div class="page-actions">
+          <button id="extract-data-btn" class="btn btn-primary">
+            <i class="material-icons">data_usage</i>
+            Extract Data
+          </button>
+          <button id="export-data-btn" class="btn btn-secondary">
+            <i class="material-icons">download</i>
+            Export to Excel
+          </button>
+        </div>
+      </div>
+      
+      <div class="extraction-tabs">
+        <div class="extraction-tab active" data-tab="pending">Pending Extraction</div>
+        <div class="extraction-tab" data-tab="extracted">Extracted Data</div>
+      </div>
+      
+      <div class="extraction-content active" data-content="pending">
+        <div class="extraction-list">
+          <div id="pending-extraction-list">
+            <!-- Pending extraction items will be loaded here -->
+          </div>
+        </div>
+        
+        <div class="extraction-process-container">
+          <h3>Process Selected Forms</h3>
+          <p>Select forms above and click the Extract Data button to process them.</p>
+          <div class="form-actions">
+            <button id="select-all-btn" class="btn btn-secondary">Select All</button>
+            <button id="process-selected-btn" class="btn btn-primary">Process Selected</button>
+          </div>
+          
+          <div id="extraction-results" class="extraction-results">
+            <h4>Extraction Results</h4>
+            <div class="results-summary">
+              <div class="result-stat">
+                <div id="processed-count" class="result-value">0</div>
+                <div class="result-label">Processed</div>
+              </div>
+              <div class="result-stat">
+                <div id="successful-count" class="result-value">0</div>
+                <div class="result-label">Successful</div>
+              </div>
+              <div class="result-stat">
+                <div id="failed-count" class="result-value">0</div>
+                <div class="result-label">Failed</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="extraction-content" data-content="extracted">
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Form</th>
+                <th>Recipient</th>
+                <th>Date Extracted</th>
+                <th>Fields</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="extracted-data-table-body">
+              <tr class="empty-row">
+                <td colspan="5">No extracted data found</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </script>
+  
+  <!-- Settings Template -->
+  <script type="text/html" id="settings-template">
+    <div class="settings-page">
+      <div class="page-header">
+        <h2>Settings</h2>
+      </div>
+      
+      <div class="settings-container">
+        <div class="settings-sidebar">
+          <ul class="settings-nav">
+            <li class="settings-nav-item">
+              <a href="#general" class="settings-nav-link active" data-settings-tab="general">General</a>
+            </li>
+            <li class="settings-nav-item">
+              <a href="#email" class="settings-nav-link" data-settings-tab="email">Email Templates</a>
+            </li>
+            <li class="settings-nav-item">
+              <a href="#integration" class="settings-nav-link" data-settings-tab="integration">Integration</a>
+            </li>
+            <li class="settings-nav-item">
+              <a href="#account" class="settings-nav-link" data-settings-tab="account">Account</a>
+            </li>
+          </ul>
+        </div>
+        
+        <div class="settings-content">
+          <div class="settings-tab active" data-settings-content="general">
+            <div class="settings-section">
+              <h3 class="settings-section-title">General Settings</h3>
+              <form id="general-settings-form">
+                <div class="form-group">
+                  <label for="app-name">Application Name</label>
+                  <input type="text" id="app-name" class="form-control" value="Email Form System">
+                </div>
+                <div class="form-group">
+                  <label for="date-format">Date Format</label>
+                  <select id="date-format" class="form-control">
+                    <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+                    <option value="DD/MM/YYYY">DD/MM/YYYY</option>
+                    <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+                  </select>
+                </div>
+                <div class="form-actions">
+                  <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+              </form>
+            </div>
+          </div>
+          
+          <div class="settings-tab" data-settings-content="email">
+            <div class="settings-section">
+              <h3 class="settings-section-title">Email Templates</h3>
+              <form id="email-templates-form">
+                <div class="form-group">
+                  <label for="default-subject">Default Subject</label>
+                  <input type="text" id="default-subject" class="form-control" value="Please complete the attached form">
+                </div>
+                <div class="form-group">
+                  <label for="default-body">Default Message</label>
+                  <textarea id="default-body" class="form-control" rows="5">Hello {Name},
+
+Please complete the attached form and return it at your earliest convenience.
+
+Thank you.</textarea>
+                </div>
+                <div class="form-group">
+                  <label for="email-signature">Email Signature</label>
+                  <textarea id="email-signature" class="form-control" rows="3">Best regards,
+Admin User
+Email Form System</textarea>
+                </div>
+                <div class="form-actions">
+                  <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+              </form>
+            </div>
+          </div>
+          
+          <div class="settings-tab" data-settings-content="integration">
+            <div class="settings-section">
+              <h3 class="settings-section-title">SharePoint/OneDrive Integration</h3>
+              <form id="integration-form">
+                <div class="form-group">
+                  <label for="client-id">Client ID</label>
+                  <input type="text" id="client-id" class="form-control" placeholder="Enter your Azure AD client ID">
+                </div>
+                <div class="form-group">
+                  <label for="client-secret">Client Secret</label>
+                  <input type="password" id="client-secret" class="form-control" placeholder="Enter your Azure AD client secret">
+                </div>
+                <div class="form-group">
+                  <label for="sharepoint-site">SharePoint Site URL</label>
+                  <input type="text" id="sharepoint-site" class="form-control" placeholder="Enter your SharePoint site URL">
+                </div>
+                <div class="form-actions">
+                  <button type="button" id="test-integration-btn" class="btn btn-secondary">Test Connection</button>
+                  <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+              </form>
+            </div>
+          </div>
+          
+          <div class="settings-tab" data-settings-content="account">
+            <div class="settings-section">
+              <h3 class="settings-section-title">Account Settings</h3>
+              <form id="account-form">
+                <div class="form-group">
+                  <label for="account-name">Name</label>
+                  <input type="text" id="account-name" class="form-control">
+                </div>
+                <div class="form-group">
+                  <label for="account-email">Email</label>
+                  <input type="email" id="account-email" class="form-control" readonly>
+                </div>
+                <div class="form-actions">
+                  <button type="submit" class="btn btn-primary">Update Account</button>
+                </div>
+              </form>
+            </div>
+            
+            <div class="settings-section">
+              <h3 class="settings-section-title">Change Password</h3>
+              <form id="password-form">
+                <div class="form-group">
+                  <label for="current-password">Current Password</label>
+                  <input type="password" id="current-password" class="form-control" placeholder="Enter your current password">
+                </div>
+                <div class="form-group">
+                  <label for="new-password">New Password</label>
+                  <input type="password" id="new-password" class="form-control" placeholder="Enter your new password">
+                </div>
+                <div class="form-group">
+                  <label for="confirm-new-password">Confirm New Password</label>
+                  <input type="password" id="confirm-new-password" class="form-control" placeholder="Confirm your new password">
+                </div>
+                <div class="form-actions">
+                  <button type="submit" class="btn btn-primary">Change Password</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </script>
+  
+  <!-- JavaScript -->
+  <script src="js/core/app.js"></script>
+  <script src="js/core/router.js"></script>
+  <script src="js/core/api.js"></script>
+  <script src="js/core/auth.js"></script>
+  <script src="js/core/store.js"></script>
+  <script src="js/core/ui.js"></script>
+  <script src="js/core/templates.js"></script>
+  <script src="js/auth-implementation.js"></script>
+  <script src="js/pages/dashboard.js"></script>
+  <script src="js/pages/forms.js"></script>
+  <script src="js/pages/recipients.js"></script>
+  <script src="js/pages/tracking.js"></script>
+  <script src="js/pages/extraction.js"></script>
+  <script src="js/pages/settings.js"></script>
+  
+  <script>
+    // Initialize the application when DOM is ready
+    document.addEventListener('DOMContentLoaded', function() {
+      app.init();
+    });
+  </script>
+</head>
+<body>
+  <div id="app" class="app">
+    <!-- Application content will be rendered here -->
+    <div class="loading-container">
+      <div class="loading-spinner"></div>
+      <p>Loading application...</p>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,16 @@
+[Unit]
+Description=Email Form System Web Application
+After=network.target
+
+[Service]
+User=ubuntu
+WorkingDirectory=/home/ubuntu/email_form_system/web_app/backend
+ExecStart=/usr/local/bin/gunicorn -c gunicorn_config.py app:app
+Restart=always
+RestartSec=10
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=email-form-system
+
+[Install]
+WantedBy=multi-user.target

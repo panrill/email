@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/home/ubuntu/email_form_system/web_app/backend/app.py", line 11, in <module>
+    from integration import EmailFormSystemIntegration
+  File "/home/ubuntu/email_form_system/web_app/backend/integration.py", line 10, in <module>
+    from scripts.email_sender import EmailFormSender
+ModuleNotFoundError: No module named 'scripts'

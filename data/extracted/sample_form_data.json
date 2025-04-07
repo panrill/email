@@ -1,0 +1,19 @@
+{
+  "metadata": {
+    "filename": "sample_form.pdf",
+    "path": "../forms/sample_form.pdf",
+    "extraction_methods": [
+      "pdftotext"
+    ]
+  },
+  "form_fields": {},
+  "text_content": "                                        Sample Information Form\n\nPlease fill out this form completely and return it via email.\n\n\nName:                             ____________________\n\n\nEmail:                            ____________________\n\n\nPhone:                            ____________________\n\n\nAddress:\n\n____________________________________________\n\n____________________________________________\n\n____________________________________________\n\n\nPreferred Contact Method:\n\n[ ] Email\n\n[ ] Phone\n\n[ ] Mail\n\n\nDate:                             ____ / ____ / ________\n\n\n                    Item                                        Quantity   Description\n\n\n\n\nAdditional Comments:\n\n____________________________________________\n\n____________________________________________\n\n____________________________________________\n\fSignature:\n\n\n_______________________________\n\f",
+  "extracted_data": {
+    "name": "____________________",
+    "email": null,
+    "phone": "",
+    "address": "____________________________________________",
+    "date": null
+  },
+  "table_data": []
+}

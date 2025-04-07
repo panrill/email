@@ -1,0 +1,18 @@
+{
+  "client_id": "",
+  "client_secret": "",
+  "sharepoint_site": "",
+  "token_path": "/home/ubuntu/email_form_system/data/o365_token",
+  "users": {
+    "admin@example.com": {
+      "password": "pbkdf2:sha256:150000$vaSKJBWF$d33c6fa0a85c4d75ac38162345e97f7e852a6fa3d6a1e255a4c29dc425f58708",
+      "name": "Admin User",
+      "role": "admin"
+    }
+  },
+  "email_templates": {
+    "default_subject": "Please complete the attached form",
+    "default_body": "Hello {Name},\n\nPlease complete the attached form and return it at your earliest convenience.\n\nThank you.",
+    "signature": "Best regards,\nAdmin User\nEmail Form System"
+  }
+}
